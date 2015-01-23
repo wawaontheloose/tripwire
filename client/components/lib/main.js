@@ -135,7 +135,7 @@ CamMotion.Engine = function(options) {
         setTimeout(function(){
           onStream(stream);
           setGlobalStream(stream, videoNode);
-        }, 10000);
+        }, 9900);
       }, noStream);
     } else if (navigator.webkitGetUserMedia) {
 
@@ -145,7 +145,7 @@ CamMotion.Engine = function(options) {
         setTimeout(function(){
           onStream(stream);
           setGlobalStream(stream, videoNode);
-        }, 10000);
+        }, 9800);
       }, noStream);
     } else {
       events.trigger("error", {

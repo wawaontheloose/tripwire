@@ -3,10 +3,11 @@
 <h5 ng-hide="cameraOn">protecting your things while you're away</h5>
 <div class='center'>
   <button class='btn begin' ng-hide="clickedToBegin.status" ng-click="open()">click to begin</button>
-  <h2 ng-show="cameraOn">{{x}}</h2>
+  <h2 ng-show="cameraOn" ng-hide="doneCounting">{{x}}</h2>
 </div>
 <div class='center'>
-  <button class="btn stop" ng-click="stopCamera()" ng-show="cameraOn">close camera</button>
+  <button class="btn stop" ng-click="refresh()" ng-show="cameraOn" ng-hide="!doneCounting">abort the mission</button>
+  <button class="btn stop" ng-click="stopCamera()" ng-show="doneCounting">close the camera</button>
 </div>
 <center><canvas ng-show="cameraOn" ng-hide="manualStop" id="canvas-blended"></canvas></center>
  <script type="text/ng-template" id="myModalContent.html">
@@ -20,7 +21,6 @@
             <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
         </div>
 </script>
-<img src="{{screenshot.src}}">
 <audio id="audio" preload="auto" tabindex="0"  type="audio/mpeg">
   <source type="audio/mp3" src="http://puu.sh/eUUnT/970377cee7.mp3">
 </audio>

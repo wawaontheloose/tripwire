@@ -30,6 +30,7 @@ angular.module('nytApp')
     $scope.cameraOn = false;
     $scope.clickedToBegin = { status: false };
     $scope.manualStop = false;
+    var busted = false, evidence = [];
     var ctx = canvas.getContext("2d");
     ctx.fillStyle = "#FF0000";
     ctx.strokeStyle = "#00FF00";
@@ -38,19 +39,29 @@ angular.module('nytApp')
       canvasSource: canvas
     });
     camMotion.on("error", function (e) {
-      console.log("error", e);
+
     });
     camMotion.on("frame", function () {
       var point = camMotion.getMovementPoint(true);
       // draw a circle
-      var image = new Image();
-      image.src = document.getElementById("canvas-blended").toDataURL('image/png');
-      $scope.screenshot = image;
       ctx.beginPath();
       ctx.arc(point.x, point.y, point.r, 0, Math.PI*2, true);
       ctx.closePath();
       if (camMotion.getAverageMovement(point.x-point.r/2, point.y-point.r/2, point.r, point.r)>4) {
-        console.log('what what what what')
+        if(!busted) {
+          var imageCt = 0;
+          busted = true;
+          $interval(function(){
+            if(imageCt < 5) {
+              imageCt++;
+              var image = new Image();
+              image.src = document.getElementById("canvas-blended").toDataURL('image/png');
+              evidence.push(image);
+              console.log('evidence', evidence, imageCt);
+            }
+          }, 2000)
+          //this is where we will make a call to mandrill & twilio api endpointz
+        }
         ctx.fill();
       } else {
         ctx.stroke();
@@ -60,6 +71,7 @@ angular.module('nytApp')
     $scope.startWatching = function() {
       var email = $scope.email;
       var cell = $scope.cell;
+      $scope.doneCounting = false;
       $scope.cameraOn = true;
       document.getElementsByTagName('canvas')[0].width = 640;
       document.getElementsByTagName('canvas')[0].height = 480;
@@ -68,6 +80,7 @@ angular.module('nytApp')
       $interval(function(){
         if($scope.x > 0 && camMotion.intervalCount()) $scope.x--;
         if($scope.x == 3) document.getElementsByTagName('audio')[0].play();
+        if($scope.x == 0) $scope.doneCounting = true;
       }, 1000)
     }
 
@@ -94,6 +107,10 @@ angular.module('nytApp')
           }
         }
       });
+    }
+
+    $scope.refresh = function() {
+      location.reload();
     }
 
   });
