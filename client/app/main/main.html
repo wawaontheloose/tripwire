@@ -1,22 +1,27 @@
 <!-- <div ng-include="'components/navbar/navbar.html'"></div> -->
-<h1>Tripwire</h1>
-<h5>(over?)protecting your things when duty calls</h5>
-<div class="container">
-  <div class="row">
-    <div class='center'>
-      <button class='btn begin' ng-click="open()">click to begin</button>
-    </div>
-  </div>
+<h1 ng-class="{ smaller : cameraOn }">Tripwire</h1>
+<h5 ng-hide="cameraOn">protecting your things while you're away</h5>
+<div class='center'>
+  <button class='btn begin' ng-hide="clickedToBegin.status" ng-click="open()">click to begin</button>
+  <h2 ng-show="cameraOn">{{x}}</h2>
 </div>
+<div class='center'>
+  <button class="btn stop" ng-click="stopCamera()" ng-show="cameraOn">close camera</button>
+</div>
+<center><canvas ng-show="cameraOn" ng-hide="manualStop" id="canvas-blended"></canvas></center>
  <script type="text/ng-template" id="myModalContent.html">
         <div class="modal-body" style="text-align:center;">
-          <p>"you give us your phone #, we use your webcam to text you if someone is snooping around while you're gone."</p>
+          <p>you give us your cell and email, we use your webcam to text you if someone is snooping around and email you a screenshot of the culprit.</p>
           <p>cell #: </p><input type="text" ng-model="cell" placeholder="xxx-xxx-xxxx"></input>
           <p>email: </p><input type="text" ng-model="email" placeholder="personal.gu@rd.ian"></input>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="ok()" ng-disabled="!email || !cell">Submit</button>
+            <button class="btn btn-primary" ng-click="ok()" ng-disabled="!email || !cell || formValidation(cell, email)">Submit</button>
             <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
         </div>
 </script>
-<button class="btn btn-primary" ng-click="stopCamera()" ng-show="cameraOn">Stop camera</button>
+<img src="{{screenshot.src}}">
+<audio id="audio" preload="auto" tabindex="0"  type="audio/mpeg">
+  <source type="audio/mp3" src="http://puu.sh/eUUnT/970377cee7.mp3">
+</audio>
+<footer>made by <a href="http://twitter.com/levlinds" target="_blank">@levlinds</a> | this a chrome-only application</footer>

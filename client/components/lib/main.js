@@ -105,8 +105,7 @@ CamMotion.Engine = function(options) {
 	 * @param stream the html5 stream object
 	 */
 	function onStream(stream) {
-		events.trigger("streamInit", stream);
-
+    events.trigger("streamInit", stream);
 		// start the update loop
 		update();
 	}
@@ -117,25 +116,36 @@ CamMotion.Engine = function(options) {
     globalVidNode = vn;
   }
 
+  var bool = false;
+  function intervalCount(){
+    return bool;
+  }
+
 	/**
 	 * Start motion detection. When it fails
 	 * it will fail silently but an "error" event will
 	 * be triggered
 	 */
 	function start() {
-
 		if (navigator.getUserMedia) {
 
 			navigator.getUserMedia({audio: false, video: true}, function(stream) {
 				videoNode.src = stream;
-        onStream(stream);
+        bool = true;
+        setTimeout(function(){
+          onStream(stream);
+          setGlobalStream(stream, videoNode);
+        }, 10000);
       }, noStream);
     } else if (navigator.webkitGetUserMedia) {
 
       navigator.webkitGetUserMedia({audio: false, video: true}, function(stream) {
         videoNode.src = window.webkitURL.createObjectURL(stream);
-        onStream(stream);
-        setGlobalStream(stream, videoNode);
+        bool = true;
+        setTimeout(function(){
+          onStream(stream);
+          setGlobalStream(stream, videoNode);
+        }, 10000);
       }, noStream);
     } else {
       events.trigger("error", {
@@ -393,7 +403,8 @@ CamMotion.Engine = function(options) {
 		"stop": stop,
 		"getAverageMovement": getAverageMovement,
 		"getMovementPoint": getMovementPoint,
-		"onMotion": onMotion
+		"onMotion": onMotion,
+    "intervalCount": intervalCount
 	};
 };
 
