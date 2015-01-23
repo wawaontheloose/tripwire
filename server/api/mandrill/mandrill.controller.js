@@ -9,8 +9,6 @@ exports.contactUser = function(req, res) {
   console.log('request to contactuser')
   var attachments = [];
   req.body.evidence.forEach(function(encodedStr){
-    // console.log('split')
-    // var buff = new Buffer(encodedStr.split(',')[1], 'base64');
     attachments.push({
       "type": "image/png",
       "name": "evidence.png",

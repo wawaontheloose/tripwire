@@ -9,7 +9,6 @@ angular.module('nytApp')
       if(cell.split('-').length !== 3) toReturn = true;
       if(email.split('@').length !== 2) toReturn = true;
       if(email.indexOf('@') > 0 && email.split('@')[1].split('.').length !== 2) toReturn = true;
-      toReturn = false;
       return toReturn;
     }
 
@@ -28,7 +27,7 @@ angular.module('nytApp')
     };
 
   })
-  .controller('MainCtrl', function ($scope, $http, socket, $modal, $interval, $timeout, mandrill) {
+  .controller('MainCtrl', function ($scope, $http, socket, $modal, $interval, $timeout, mandrill, twilio) {
 
     var canvas = document.getElementById("canvas-blended");
     $scope.cameraOn = false;
@@ -59,16 +58,19 @@ angular.module('nytApp')
           $interval(function(){
             if(imageCt < 5) {
               imageCt++;
-              // var image = new Image();
               var imgSrc = document.getElementById("canvas-blended").toDataURL('image/png');
               evidence.push(imgSrc);
-              if(imageCt == 5) mandrill.contactUser($scope.userInfo.cell, $scope.userInfo.email, evidence);
+              if(imageCt == 5) {
+                console.log('how many times are mandrill/twilio server posts being called..?')
+                mandrill.contactUser($scope.userInfo.cell, $scope.userInfo.email, evidence);
+                twilio.contactUser($scope.userInfo.cell);
+              }
             }
           }, 2000)
         }
-        ctx.fill();
+        // ctx.fill();
       } else {
-        ctx.stroke();
+        // ctx.stroke();
       }
     });
 
