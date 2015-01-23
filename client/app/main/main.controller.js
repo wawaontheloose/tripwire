@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('nytApp')
-  .controller('ModalInstanceCtrl', function ($scope, $modalInstance, middleman, clickedToBegin) {
+  .controller('ModalInstanceCtrl', function ($scope, $modalInstance, middleman, clickedToBegin, userInfo) {
 
     $scope.formValidation = function(cell, email) {
       var toReturn = false;
@@ -14,6 +14,10 @@ angular.module('nytApp')
     }
 
     $scope.ok = function () {
+      console.log('! cell email !', $scope.cell, $scope.email)
+      userInfo.email = $scope.email;
+      userInfo.cell = $scope.cell;
+      console.log('userInfo', userInfo)
       middleman();
       $modalInstance.close();
     };
@@ -24,13 +28,14 @@ angular.module('nytApp')
     };
 
   })
-  .controller('MainCtrl', function ($scope, $http, socket, $modal, $interval, $timeout) {
+  .controller('MainCtrl', function ($scope, $http, socket, $modal, $interval, $timeout, mandrill) {
 
     var canvas = document.getElementById("canvas-blended");
     $scope.cameraOn = false;
     $scope.clickedToBegin = { status: false };
     $scope.manualStop = false;
     var busted = false, evidence = [];
+    var email, cell;
     var ctx = canvas.getContext("2d");
     ctx.fillStyle = "#FF0000";
     ctx.strokeStyle = "#00FF00";
@@ -54,13 +59,12 @@ angular.module('nytApp')
           $interval(function(){
             if(imageCt < 5) {
               imageCt++;
-              var image = new Image();
-              image.src = document.getElementById("canvas-blended").toDataURL('image/png');
-              evidence.push(image);
-              console.log('evidence', evidence, imageCt);
+              // var image = new Image();
+              var imgSrc = document.getElementById("canvas-blended").toDataURL('image/png');
+              evidence.push(imgSrc);
+              if(imageCt == 5) mandrill.contactUser($scope.userInfo.cell, $scope.userInfo.email, evidence);
             }
           }, 2000)
-          //this is where we will make a call to mandrill & twilio api endpointz
         }
         ctx.fill();
       } else {
@@ -69,8 +73,6 @@ angular.module('nytApp')
     });
 
     $scope.startWatching = function() {
-      var email = $scope.email;
-      var cell = $scope.cell;
       $scope.doneCounting = false;
       $scope.cameraOn = true;
       document.getElementsByTagName('canvas')[0].width = 640;
@@ -91,6 +93,8 @@ angular.module('nytApp')
       $scope.manualStop = true;
     }
 
+    $scope.userInfo = { email: null, cell: null }
+
     $scope.open = function (size) {
       $scope.clickedToBegin.status = true;
       var modalInstance = $modal.open({
@@ -104,6 +108,9 @@ angular.module('nytApp')
           },
           clickedToBegin: function() {
             return $scope.clickedToBegin;
+          },
+          userInfo: function() {
+            return $scope.userInfo;
           }
         }
       });
