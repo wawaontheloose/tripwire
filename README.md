@@ -1,1 +1,1 @@
-{% img http://puu.sh/eYwg1/f0ff06ceba.png [900] [550] %}
+a mean stack hackathon app using webrtc, js-cam-motion, twilio, mandrill, and socket.io to help you protect your stuff when you can't
