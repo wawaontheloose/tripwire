@@ -17,7 +17,6 @@ exports.contactUser = function(req, res) {
     cellArr.push(part);
   })
   var cellNum = "+1" + cellArr.join("");
-  console.log("cellNum", cellNum)
   client.messages.create({
     body: "We caught someone sneakin' around! Check your email for evidence! - Tripwire",
     to: cellNum,
@@ -29,9 +28,8 @@ exports.contactUser = function(req, res) {
 
 exports.userAborted = function(req, res) {
   if(req.body['Body'] == 'abort') {
-    eventMachine.trigger('userAborted', { abort: true })
+    eventMachine.trigger('userAborted', { abort: true, senderNum: req.body['From'] })
   }
-  console.log('inside user aborted', req.body);
 }
 
 // Get list of twilios

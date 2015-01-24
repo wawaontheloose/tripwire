@@ -34,7 +34,7 @@ angular.module('nytApp')
     }
 
   })
-  .controller('MainCtrl', function ($scope, $http, socket, $modal, $interval, $timeout, mandrill, twilio) {
+  .controller('MainCtrl', function ($scope, $http, socket, $modal, $interval, $timeout, mandrill, twilio, $location) {
 
     var canvas = document.getElementById("canvas-blended");
     $scope.cameraOn = false;
@@ -132,5 +132,18 @@ angular.module('nytApp')
     $scope.refresh = function() {
       location.reload();
     }
+
+    socket.socket.on('userAborted', function(data) {
+      var holder = [];
+      if($scope.userInfo.cell) {
+        $scope.userInfo.cell.split('-').forEach(function(part){
+          holder.push(part);
+        })
+      }
+      var userCell = "+1" + holder.join("");
+      if(data.senderNum == userCell && data.abort == true) {
+        window.location = 'https://www.google.com/search?q=how+to+be+inconspicuous&es_sm=119&biw=1914&bih=986&source=lnms&sa=X&ei=eg_EVMK4J4yagwSKzoHoBQ&ved=0CAUQ_AUoAA&dpr=1';
+      }
+    })
 
   });
