@@ -7,18 +7,18 @@ var authToken = "54719376e1d7c8c56ff914efd17aaa21";
 var client = require('twilio')(accountSid, authToken);
 
 exports.contactUser = function(req, res) {
-  console.log('ejisjdifjifjidf\n ***', req.body);
   var cellArr = [];
   req.body.cell.split('-').forEach(function(part){
     cellArr.push(part);
   })
   var cellNum = "+1" + cellArr.join("");
+  console.log("cellNum", cellNum)
   client.messages.create({
-    body: "Someone's snooping! Check your email for evidence! - Tripwire",
+    body: "We caught someone sneakin' around! Check your email for evidence! - Tripwire",
     to: cellNum,
     from: "+12676993413"
   }, function(err, message) {
-      console.log(err,message.sid);
+      console.log(err);
   });
 }
 

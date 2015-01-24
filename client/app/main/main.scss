@@ -71,6 +71,24 @@ input {
     background: rgba(255,255,255,0.5);
     margin: 0 0 10px 0;
     border-radius: 5px;
+    display: inline-block;
+}
+.modal-body {
+  span {
+    font-size: 10px;
+  }
+}
+#modal-settings {
+  display: none;
+  text-align: center;
+  p {
+    span {
+      font-size: 12px;
+    }
+    .default {
+      color: rgb(199,70,70);
+    }
+  }
 }
 ::selection {
     color: white;

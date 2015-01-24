@@ -12,12 +12,19 @@
 <center><canvas ng-show="cameraOn" ng-hide="manualStop" id="canvas-blended"></canvas></center>
  <script type="text/ng-template" id="myModalContent.html">
         <div class="modal-body" style="text-align:center;">
-          <p>you give us your cell and email, we use your webcam to text you if someone is snooping around and email you a screenshot of the culprit.</p>
+          <p>you give us your cell and email, we use your webcam to text you if someone is snooping around and email you screenshots of the culprit.<br><span>*note: we forget your cell and email as soon as you abort the mission / exit this window. once you start, you can text us at 267-699-3413 the word 'abort' if we busted someone already or you decided creeping on people is actually kinda weird.*</span></p>
           <p>cell #: </p><input type="text" ng-model="cell" placeholder="xxx-xxx-xxxx"></input>
-          <p>email: </p><input type="text" ng-model="email" placeholder="personal.gu@rd.ian"></input>
+          <p>email: </p><input type="text" ng-model="email" placeholder="personalgu@rd.ian"></input>
+        </div>
+        <div id="modal-settings">
+          <p>when we detect motion, how many screenshots do you want taken? <span class='default'>default:</span><span class='secondspan'> 5, min: 1, max: 5</span></p>
+          <input ng-model="screenshotNum" type='number'></input>
+          <p>at what rate do you want the screenshots taken? <span class='default'>default:</span><span class='secondspan'> every 2 seconds, min: 1, max: 5</span></p>
+          <input ng-model="screenshotRate" type='number'></input>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="ok()" ng-disabled="!email || !cell || formValidation(cell, email)">Submit</button>
+            <button class="btn" ng-click="setSettings()" style="float:left;"><span class="glyphicon glyphicon-asterisk"></span></button>
+            <button class="btn btn-primary" ng-click="ok()" ng-disabled="!email || !cell || formValidation(cell, email, screenshotNum, screenshotRate)">Submit</button>
             <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
         </div>
 </script>

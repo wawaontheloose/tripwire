@@ -3,28 +3,35 @@
 angular.module('nytApp')
   .controller('ModalInstanceCtrl', function ($scope, $modalInstance, middleman, clickedToBegin, userInfo) {
 
-    $scope.formValidation = function(cell, email) {
+    var ssNum, ssRate;
+    $scope.formValidation = function(cell, email, num, rate) {
       var toReturn = false;
       if(cell.length !== 12) toReturn = true;
       if(cell.split('-').length !== 3) toReturn = true;
       if(email.split('@').length !== 2) toReturn = true;
       if(email.indexOf('@') > 0 && email.split('@')[1].split('.').length !== 2) toReturn = true;
+      if(num < 0 || num > 5 || rate > 5 || rate < 0) toReturn = true;
+      ssNum = num, ssRate = rate;
       return toReturn;
     }
 
     $scope.ok = function () {
-      console.log('! cell email !', $scope.cell, $scope.email)
       userInfo.email = $scope.email;
       userInfo.cell = $scope.cell;
-      console.log('userInfo', userInfo)
+      if(ssNum) userInfo.ssNum = ssNum;
+      if(ssRate) userInfo.ssRate = ssRate;
       middleman();
       $modalInstance.close();
-    };
+    }
 
     $scope.cancel = function () {
       $modalInstance.dismiss('cancel');
       clickedToBegin.status = false;
-    };
+    }
+
+    $scope.setSettings = function() {
+      angular.element('#modal-settings').slideToggle();
+    }
 
   })
   .controller('MainCtrl', function ($scope, $http, socket, $modal, $interval, $timeout, mandrill, twilio) {
@@ -54,19 +61,23 @@ angular.module('nytApp')
       if (camMotion.getAverageMovement(point.x-point.r/2, point.y-point.r/2, point.r, point.r)>4) {
         if(!busted) {
           var imageCt = 0;
+          var screenshotRate = 2000; //default setting
+          var screenshotNum = 5; //default seting
+          if($scope.userInfo.ssNum) screenshotNum = $scope.userInfo.ssNum;
+          if($scope.userInfo.ssRate) screenshotRate = $scope.userInfo.ssRate * 1000;
+          twilio.contactUser($scope.userInfo.cell); //text before email
           busted = true;
           $interval(function(){
-            if(imageCt < 5) {
+            if(imageCt < screenshotNum) {
               imageCt++;
               var imgSrc = document.getElementById("canvas-blended").toDataURL('image/png');
               evidence.push(imgSrc);
-              if(imageCt == 5) {
+              if(imageCt == screenshotNum) {
                 console.log('how many times are mandrill/twilio server posts being called..?')
                 mandrill.contactUser($scope.userInfo.cell, $scope.userInfo.email, evidence);
-                twilio.contactUser($scope.userInfo.cell);
               }
             }
-          }, 2000)
+          }, screenshotRate)
         }
         // ctx.fill();
       } else {
