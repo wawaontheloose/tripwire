@@ -15,6 +15,10 @@ angular.module('nytApp')
       ioSocket: ioSocket
     });
 
+    socket.on('userAborted', function(data) {
+      console.log('is zeke a magician???', data)
+    })
+
     return {
       socket: socket,
 

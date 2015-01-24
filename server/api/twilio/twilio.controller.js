@@ -5,6 +5,11 @@ var Twilio = require('./twilio.model');
 var accountSid = 'AC445cc2f5f308b28894ed302ca2ad9ce6';
 var authToken = "54719376e1d7c8c56ff914efd17aaa21";
 var client = require('twilio')(accountSid, authToken);
+var eventMachine = require('./eventMachine');
+
+// router.post('/foo', function() {
+//   eventMachine.trigger('socketEvent', data)
+// })
 
 exports.contactUser = function(req, res) {
   var cellArr = [];
@@ -20,6 +25,13 @@ exports.contactUser = function(req, res) {
   }, function(err, message) {
       console.log(err);
   });
+}
+
+exports.userAborted = function(req, res) {
+  if(req.body['Body'] == 'abort') {
+    eventMachine.trigger('userAborted', { abort: true })
+  }
+  console.log('inside user aborted', req.body);
 }
 
 // Get list of twilios
