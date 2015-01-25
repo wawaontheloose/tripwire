@@ -28,6 +28,7 @@ exports.contactUser = function(req, res) {
 
 exports.userAborted = function(req, res) {
   if(req.body['Body'] == 'abort') {
+    console.log('*****\n emitting event in server-side userAborted \n ******')
     eventMachine.trigger('userAborted', { abort: true, senderNum: req.body['From'] })
   }
 }
